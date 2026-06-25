@@ -10,8 +10,8 @@ export function useMarketData() {
     error: marketError,
     isLoading: marketLoading,
   } = useSWR<MarketDataResponse>('/api/market', fetcher, {
-    refreshInterval: 300_000,
-    revalidateOnFocus: false,
+    refreshInterval: 60_000,
+    revalidateOnFocus: true,
   });
 
   const {
@@ -19,8 +19,8 @@ export function useMarketData() {
     error: fgError,
     isLoading: fgLoading,
   } = useSWR<FearGreedResponse>('/api/fear-greed', fetcher, {
-    refreshInterval: 900_000,
-    revalidateOnFocus: false,
+    refreshInterval: 300_000,
+    revalidateOnFocus: true,
   });
 
   return {

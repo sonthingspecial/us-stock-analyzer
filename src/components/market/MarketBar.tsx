@@ -1,8 +1,9 @@
 'use client';
-import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
+import { TrendingUp, TrendingDown, Minus, RefreshCw } from 'lucide-react';
 import { useMarketData } from '@/hooks/useMarketData';
 import { useExchangeRate } from '@/hooks/useExchangeRate';
 import { useInterestRate } from '@/hooks/useInterestRate';
+import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 
 function MarketItem({
@@ -48,10 +49,28 @@ function Divider() {
   return <div className="w-px h-7 bg-gray-200 dark:bg-gray-800 mx-0.5 shrink-0" />;
 }
 
+function isUSMarketOpen(): boolean {
+  const now = new Date();
+  const dayOfWeek = now.getUTCDay(); // 0=Sun, 6=Sat
+  if (dayOfWeek === 0 || dayOfWeek === 6) return false;
+  // EDT (UTC-4): market 13:30–20:00 UTC
+  const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
+  return utcMinutes >= 810 && utcMinutes < 1200; // 13:30–20:00 UTC
+}
+
 export function MarketBar() {
   const { market, fearGreed, isLoading: mktLoading } = useMarketData();
   const { data: fx } = useExchangeRate();
   const { data: rate } = useInterestRate();
+  const [lastUpdated, setLastUpdated] = useState('');
+  const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    if (market) {
+      setLastUpdated(new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
+      setIsOpen(isUSMarketOpen());
+    }
+  }, [market]);
 
   if (mktLoading) {
     return (
@@ -92,6 +111,29 @@ export function MarketBar() {
             <MarketItem label="공포탐욕" value={`${fearGreed.score}`} sub={fearGreed.score <= 24 ? '극단적 공포' : fearGreed.score <= 44 ? '공포' : fearGreed.score <= 54 ? '중립' : fearGreed.score <= 74 ? '탐욕' : '극단적 탐욕'} />
           </>
         )}
+
+        {/* Live indicator + last updated */}
+        <Divider />
+        <div className="flex flex-col items-center px-3 py-1.5 min-w-[72px]">
+          <div className="flex items-center gap-1 mb-0.5">
+            <span className={clsx(
+              'inline-block w-1.5 h-1.5 rounded-full',
+              isOpen ? 'bg-green-500 animate-pulse' : 'bg-gray-400'
+            )} />
+            <span className={clsx(
+              'text-[10px] font-semibold',
+              isOpen ? 'text-green-600 dark:text-green-400' : 'text-gray-400'
+            )}>
+              {isOpen ? 'LIVE' : '마감'}
+            </span>
+          </div>
+          {lastUpdated && (
+            <span className="text-[9px] text-gray-400 flex items-center gap-0.5">
+              <RefreshCw size={7} />
+              {lastUpdated}
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );

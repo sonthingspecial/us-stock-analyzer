@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { FALLBACK_INTEREST_RATE } from '@/lib/constants/fallbackData';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const apiKey = process.env.FRED_API_KEY;
   if (!apiKey) {
@@ -11,7 +13,7 @@ export async function GET() {
     const url =
       `https://api.stlouisfed.org/fred/series/observations` +
       `?series_id=FEDFUNDS&api_key=${apiKey}&sort_order=desc&limit=2&file_type=json`;
-    const res = await fetch(url, { next: { revalidate: 3600 } });
+    const res = await fetch(url, { cache: 'no-store' });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
     const obs = data.observations;

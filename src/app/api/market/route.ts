@@ -1,11 +1,13 @@
 import { NextResponse } from 'next/server';
 import { FALLBACK_MARKET } from '@/lib/constants/fallbackData';
 
+export const dynamic = 'force-dynamic';
+
 async function fetchTicker(ticker: string) {
   const encoded = encodeURIComponent(ticker);
   const url = `https://query1.finance.yahoo.com/v8/finance/chart/${encoded}?interval=1d&range=2d`;
   const res = await fetch(url, {
-    next: { revalidate: 300 },
+    cache: 'no-store',
     headers: {
       'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
       'Accept': 'application/json',

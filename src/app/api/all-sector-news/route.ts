@@ -26,6 +26,8 @@ async function fetchSectorNews(id: SectorId): Promise<SectorNewsResponse> {
   }
 }
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   const results = await Promise.all(SECTOR_IDS.map(fetchSectorNews));
   const newsMap: Record<string, SectorNewsResponse> = {};
@@ -34,8 +36,6 @@ export async function GET() {
   });
 
   return NextResponse.json(newsMap, {
-    headers: {
-      'Cache-Control': 'public, s-maxage=1800, stale-while-revalidate=3600',
-    },
+    headers: { 'Cache-Control': 'no-store' },
   });
 }
