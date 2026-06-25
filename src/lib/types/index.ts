@@ -58,15 +58,24 @@ export interface Recommendation {
   emoji: string;
 }
 
+export interface RationaleItem {
+  factor: string;
+  text: string;
+  sentiment: 'positive' | 'negative' | 'neutral';
+}
+
 export interface SectorAnalysis {
   id: SectorId;
   nameKo: string;
   nameEn: string;
   etf: string;
   icon: string;
+  topStocks: string[];
   score: SectorScoreBreakdown;
   recommendation: Recommendation;
+  rationale: RationaleItem[];
   news: NewsItem[];
+  allNews: NewsItem[];
   updatedAt: string;
 }
 
@@ -95,6 +104,7 @@ export interface SectorDefinition {
   nameEn: string;
   etf: string;
   icon: string;
+  topStocks: string[];
   fxSensitivity: FxSensitivity;
   rateSensitivity: RateSensitivity;
 }

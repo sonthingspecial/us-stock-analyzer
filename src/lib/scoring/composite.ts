@@ -15,6 +15,7 @@ import { vixScore } from './vixScore';
 import { exchangeRateScore } from './exchangeRateScore';
 import { interestRateScore } from './interestRateScore';
 import { newsScore } from './newsScore';
+import { generateRationale } from './rationale';
 
 function getRecommendation(total: number): Recommendation {
   if (total >= 75) return { key: 'strong-buy', labelKo: '강력 매수', color: 'green', emoji: '🟢' };
@@ -63,9 +64,12 @@ export function computeAllSectors(
       nameEn: def.nameEn,
       etf: def.etf,
       icon: def.icon,
+      topStocks: def.topStocks,
       score,
       recommendation: getRecommendation(score.total),
+      rationale: generateRationale(score),
       news: newsData.items.slice(0, 3),
+      allNews: newsData.items,
       updatedAt: new Date().toISOString(),
     };
   }).sort((a, b) => b.score.total - a.score.total);

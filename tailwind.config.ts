@@ -14,9 +14,7 @@ const config: Config = {
         mono: ['ui-monospace', 'SFMono-Regular', 'monospace'],
       },
       colors: {
-        gray: {
-          950: '#030712',
-        },
+        gray: { 950: '#030712' },
       },
     },
   },

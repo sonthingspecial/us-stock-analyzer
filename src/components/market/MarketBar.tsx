@@ -3,7 +3,6 @@ import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { useMarketData } from '@/hooks/useMarketData';
 import { useExchangeRate } from '@/hooks/useExchangeRate';
 import { useInterestRate } from '@/hooks/useInterestRate';
-import { MarketBarSkeleton } from '@/components/ui/LoadingSkeleton';
 import clsx from 'clsx';
 
 function MarketItem({
@@ -21,121 +20,76 @@ function MarketItem({
 }) {
   const up = changePercent !== undefined && changePercent > 0;
   const down = changePercent !== undefined && changePercent < 0;
-
   return (
-    <div className={clsx('flex flex-col min-w-[100px] px-4 py-2 rounded-lg', highlight)}>
-      <span className="text-xs text-gray-500 mb-0.5">{label}</span>
+    <div className={clsx('flex flex-col min-w-[88px] sm:min-w-[100px] px-3 sm:px-4 py-2 rounded-lg', highlight)}>
+      <span className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-500 mb-0.5 whitespace-nowrap">{label}</span>
       <div className="flex items-center gap-1">
-        <span className="text-sm font-bold text-gray-900 font-mono">{value}</span>
+        <span className="text-xs sm:text-sm font-bold text-gray-900 dark:text-white font-mono">{value}</span>
         {changePercent !== undefined && (
-          <span
-            className={clsx(
-              'text-xs flex items-center gap-0.5',
-              up ? 'text-green-600' : down ? 'text-red-600' : 'text-gray-400'
-            )}
-          >
-            {up ? <TrendingUp size={10} /> : down ? <TrendingDown size={10} /> : <Minus size={10} />}
+          <span className={clsx('text-[10px] sm:text-xs flex items-center gap-0.5', up ? 'text-green-600 dark:text-green-400' : down ? 'text-red-600 dark:text-red-400' : 'text-gray-400')}>
+            {up ? <TrendingUp size={9} /> : down ? <TrendingDown size={9} /> : <Minus size={9} />}
             {changePercent > 0 ? '+' : ''}{changePercent.toFixed(2)}%
           </span>
         )}
       </div>
-      {sub && <span className="text-xs text-gray-400">{sub}</span>}
+      {sub && <span className="text-[10px] sm:text-xs text-gray-400 dark:text-gray-500">{sub}</span>}
     </div>
   );
 }
 
 function vixHighlight(vix: number) {
-  if (vix < 15) return 'bg-green-50';
-  if (vix < 20) return 'bg-yellow-50';
-  if (vix < 25) return 'bg-orange-50';
-  return 'bg-red-50';
+  if (vix < 15) return 'bg-green-50 dark:bg-green-900/20';
+  if (vix < 20) return 'bg-yellow-50 dark:bg-yellow-900/20';
+  if (vix < 25) return 'bg-orange-50 dark:bg-orange-900/20';
+  return 'bg-red-50 dark:bg-red-900/20';
+}
+
+function Divider() {
+  return <div className="w-px h-7 bg-gray-200 dark:bg-gray-800 mx-0.5 shrink-0" />;
 }
 
 export function MarketBar() {
   const { market, fearGreed, isLoading: mktLoading } = useMarketData();
-  const { data: fx, isLoading: fxLoading } = useExchangeRate();
-  const { data: rate, isLoading: rateLoading } = useInterestRate();
+  const { data: fx } = useExchangeRate();
+  const { data: rate } = useInterestRate();
 
-  if (mktLoading && fxLoading && rateLoading) {
+  if (mktLoading) {
     return (
-      <div className="sticky top-0 z-50 bg-white border-b border-gray-200">
-        <MarketBarSkeleton />
+      <div className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+        <div className="flex gap-3 px-4 py-2">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="animate-pulse">
+              <div className="h-2.5 w-10 bg-gray-200 dark:bg-gray-700 rounded mb-1" />
+              <div className="h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded" />
+            </div>
+          ))}
+        </div>
       </div>
     );
   }
 
-  const trendArrow =
-    rate?.trend === 'falling' ? '↓' : rate?.trend === 'rising' ? '↑' : '→';
+  const trendArrow = rate?.trend === 'falling' ? '↓' : rate?.trend === 'rising' ? '↑' : '→';
 
   return (
-    <div className="sticky top-0 z-50 bg-white/95 backdrop-blur border-b border-gray-200 shadow-sm overflow-x-auto">
-      <div className="flex items-center gap-1 px-4 py-1 min-w-max">
+    <div className="sticky top-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur border-b border-gray-200 dark:border-gray-800 shadow-sm overflow-x-auto">
+      <div className="flex items-center gap-0.5 px-2 sm:px-4 py-1 min-w-max">
         {market && (
           <>
-            <MarketItem
-              label="S&P 500 (SPY)"
-              value={market.spy.price > 0 ? `$${market.spy.price.toLocaleString()}` : '—'}
-              changePercent={market.spy.changePercent}
-            />
-            <div className="w-px h-8 bg-gray-200 mx-1" />
-            <MarketItem
-              label="NASDAQ (QQQ)"
-              value={market.qqq.price > 0 ? `$${market.qqq.price.toLocaleString()}` : '—'}
-              changePercent={market.qqq.changePercent}
-            />
-            <div className="w-px h-8 bg-gray-200 mx-1" />
-            <MarketItem
-              label="VIX 변동성"
-              value={market.vix.toFixed(2)}
-              sub={
-                market.vix < 15
-                  ? '안정'
-                  : market.vix < 20
-                  ? '보통'
-                  : market.vix < 25
-                  ? '주의'
-                  : '위험'
-              }
-              highlight={vixHighlight(market.vix)}
-            />
+            <MarketItem label="S&P 500" value={market.spy.price > 0 ? `$${market.spy.price.toLocaleString()}` : '—'} changePercent={market.spy.changePercent} />
+            <Divider />
+            <MarketItem label="NASDAQ" value={market.qqq.price > 0 ? `$${market.qqq.price.toLocaleString()}` : '—'} changePercent={market.qqq.changePercent} />
+            <Divider />
+            <MarketItem label="VIX" value={market.vix.toFixed(2)} sub={market.vix < 15 ? '안정' : market.vix < 20 ? '보통' : market.vix < 25 ? '주의' : '위험'} highlight={vixHighlight(market.vix)} />
           </>
         )}
-        <div className="w-px h-8 bg-gray-200 mx-1" />
-        {fx && (
-          <MarketItem label="USD/KRW" value={`₩${fx.usdKrw.toLocaleString()}`} />
-        )}
-        <div className="w-px h-8 bg-gray-200 mx-1" />
-        {rate && (
-          <MarketItem
-            label="미국 기준금리"
-            value={`${rate.fedRate.toFixed(2)}%`}
-            sub={`${trendArrow} ${
-              rate.trend === 'falling'
-                ? '인하 중'
-                : rate.trend === 'rising'
-                ? '인상 중'
-                : '동결'
-            }`}
-          />
-        )}
+        <Divider />
+        {fx && <MarketItem label="USD/KRW" value={`₩${fx.usdKrw.toLocaleString()}`} />}
+        <Divider />
+        {rate && <MarketItem label="기준금리" value={`${rate.fedRate.toFixed(2)}%`} sub={`${trendArrow} ${rate.trend === 'falling' ? '인하 중' : rate.trend === 'rising' ? '인상 중' : '동결'}`} />}
         {fearGreed && (
           <>
-            <div className="w-px h-8 bg-gray-200 mx-1" />
-            <MarketItem
-              label="공포탐욕지수"
-              value={`${fearGreed.score}`}
-              sub={
-                fearGreed.score <= 24
-                  ? '극단적 공포'
-                  : fearGreed.score <= 44
-                  ? '공포'
-                  : fearGreed.score <= 54
-                  ? '중립'
-                  : fearGreed.score <= 74
-                  ? '탐욕'
-                  : '극단적 탐욕'
-              }
-            />
+            <Divider />
+            <MarketItem label="공포탐욕" value={`${fearGreed.score}`} sub={fearGreed.score <= 24 ? '극단적 공포' : fearGreed.score <= 44 ? '공포' : fearGreed.score <= 54 ? '중립' : fearGreed.score <= 74 ? '탐욕' : '극단적 탐욕'} />
           </>
         )}
       </div>
