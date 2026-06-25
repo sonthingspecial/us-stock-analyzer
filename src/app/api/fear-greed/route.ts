@@ -20,12 +20,10 @@ export async function GET() {
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const raw = await res.json();
     const fg = raw.fear_and_greed;
-    return NextResponse.json({
-      score: Math.round(fg.score),
-      rating: fg.rating,
-      timestamp: new Date().toISOString(),
-      source: 'live',
-    });
+    return NextResponse.json(
+      { score: Math.round(fg.score), rating: fg.rating, timestamp: new Date().toISOString(), source: 'live' },
+      { headers: { 'Cache-Control': 'no-store' } }
+    );
   } catch (err) {
     console.error('[api/fear-greed]', err);
     return NextResponse.json(FALLBACK_FEAR_GREED);

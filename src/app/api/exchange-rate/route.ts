@@ -10,11 +10,10 @@ export async function GET() {
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const data = await res.json();
-    return NextResponse.json({
-      usdKrw: Math.round(data.rates.KRW * 10) / 10,
-      timestamp: new Date().toISOString(),
-      source: 'live',
-    });
+    return NextResponse.json(
+      { usdKrw: Math.round(data.rates.KRW * 10) / 10, timestamp: new Date().toISOString(), source: 'live' },
+      { headers: { 'Cache-Control': 'no-store' } }
+    );
   } catch (err) {
     console.error('[api/exchange-rate]', err);
     return NextResponse.json(FALLBACK_EXCHANGE_RATE);

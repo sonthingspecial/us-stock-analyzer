@@ -3,7 +3,6 @@ import { TrendingUp, TrendingDown, Minus, RefreshCw } from 'lucide-react';
 import { useMarketData } from '@/hooks/useMarketData';
 import { useExchangeRate } from '@/hooks/useExchangeRate';
 import { useInterestRate } from '@/hooks/useInterestRate';
-import { useEffect, useState } from 'react';
 import clsx from 'clsx';
 
 function MarketItem({
@@ -51,32 +50,33 @@ function Divider() {
 
 function isUSMarketOpen(): boolean {
   const now = new Date();
-  const dayOfWeek = now.getUTCDay(); // 0=Sun, 6=Sat
-  if (dayOfWeek === 0 || dayOfWeek === 6) return false;
-  // EDT (UTC-4): market 13:30–20:00 UTC
-  const utcMinutes = now.getUTCHours() * 60 + now.getUTCMinutes();
-  return utcMinutes >= 810 && utcMinutes < 1200; // 13:30–20:00 UTC
+  const day = now.getUTCDay();
+  if (day === 0 || day === 6) return false;
+  // EDT = UTC-4: market 13:30–20:00 UTC
+  const utcMin = now.getUTCHours() * 60 + now.getUTCMinutes();
+  return utcMin >= 810 && utcMin < 1200;
+}
+
+function formatServerTime(isoString: string): string {
+  try {
+    return new Date(isoString).toLocaleTimeString('ko-KR', {
+      hour: '2-digit', minute: '2-digit', second: '2-digit'
+    });
+  } catch {
+    return '';
+  }
 }
 
 export function MarketBar() {
-  const { market, fearGreed, isLoading: mktLoading } = useMarketData();
+  const { market, fearGreed, isLoading: mktLoading, isValidating, refreshAll } = useMarketData();
   const { data: fx } = useExchangeRate();
   const { data: rate } = useInterestRate();
-  const [lastUpdated, setLastUpdated] = useState('');
-  const [isOpen, setIsOpen] = useState(false);
-
-  useEffect(() => {
-    if (market) {
-      setLastUpdated(new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
-      setIsOpen(isUSMarketOpen());
-    }
-  }, [market]);
 
   if (mktLoading) {
     return (
       <div className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
         <div className="flex gap-3 px-4 py-2">
-          {[...Array(5)].map((_, i) => (
+          {[...Array(6)].map((_, i) => (
             <div key={i} className="animate-pulse">
               <div className="h-2.5 w-10 bg-gray-200 dark:bg-gray-700 rounded mb-1" />
               <div className="h-4 w-16 bg-gray-200 dark:bg-gray-700 rounded" />
@@ -88,6 +88,8 @@ export function MarketBar() {
   }
 
   const trendArrow = rate?.trend === 'falling' ? '↓' : rate?.trend === 'rising' ? '↑' : '→';
+  const marketOpen = isUSMarketOpen();
+  const lastFetched = market?.timestamp ? formatServerTime(market.timestamp) : '';
 
   return (
     <div className="sticky top-0 z-50 bg-white/95 dark:bg-gray-900/95 backdrop-blur border-b border-gray-200 dark:border-gray-800 shadow-sm overflow-x-auto">
@@ -112,27 +114,34 @@ export function MarketBar() {
           </>
         )}
 
-        {/* Live indicator + last updated */}
+        {/* Status + manual refresh */}
         <Divider />
-        <div className="flex flex-col items-center px-3 py-1.5 min-w-[72px]">
-          <div className="flex items-center gap-1 mb-0.5">
-            <span className={clsx(
-              'inline-block w-1.5 h-1.5 rounded-full',
-              isOpen ? 'bg-green-500 animate-pulse' : 'bg-gray-400'
-            )} />
-            <span className={clsx(
-              'text-[10px] font-semibold',
-              isOpen ? 'text-green-600 dark:text-green-400' : 'text-gray-400'
-            )}>
-              {isOpen ? 'LIVE' : '마감'}
-            </span>
+        <div className="flex items-center gap-2 px-2 py-1.5">
+          <div className="flex flex-col items-center min-w-[60px]">
+            <div className="flex items-center gap-1">
+              <span className={clsx(
+                'inline-block w-1.5 h-1.5 rounded-full shrink-0',
+                marketOpen ? 'bg-green-500 animate-pulse' : 'bg-gray-300 dark:bg-gray-600'
+              )} />
+              <span className={clsx(
+                'text-[10px] font-semibold',
+                marketOpen ? 'text-green-600 dark:text-green-400' : 'text-gray-400'
+              )}>
+                {marketOpen ? 'LIVE' : '장 마감'}
+              </span>
+            </div>
+            {lastFetched && (
+              <span className="text-[9px] text-gray-400 mt-0.5">{lastFetched} 기준</span>
+            )}
           </div>
-          {lastUpdated && (
-            <span className="text-[9px] text-gray-400 flex items-center gap-0.5">
-              <RefreshCw size={7} />
-              {lastUpdated}
-            </span>
-          )}
+          <button
+            onClick={refreshAll}
+            disabled={isValidating}
+            className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 transition-colors disabled:opacity-40"
+            title="데이터 새로고침"
+          >
+            <RefreshCw size={13} className={isValidating ? 'animate-spin' : ''} />
+          </button>
         </div>
       </div>
     </div>

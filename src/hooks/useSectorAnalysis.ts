@@ -20,7 +20,7 @@ export function useSectorAnalysis() {
   const { data: exchangeRate, isLoading: fxLoading } = useExchangeRate();
   const { data: interestRate, isLoading: rateLoading } = useInterestRate();
 
-  const { data: allNews, isLoading: newsLoading } = useSWR<
+  const { data: allNews, isLoading: newsLoading, isValidating: newsValidating } = useSWR<
     Record<SectorId, SectorNewsResponse>
   >('/api/all-sector-news', fetcher, {
     refreshInterval: 1_800_000,
@@ -49,5 +49,5 @@ export function useSectorAnalysis() {
       : null,
   ].filter(Boolean) as string[];
 
-  return { sectors, isLoading, fallbackSources };
+  return { sectors, isLoading, isValidating: newsValidating, fallbackSources };
 }

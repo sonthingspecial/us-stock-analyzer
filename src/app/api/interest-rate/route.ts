@@ -21,12 +21,10 @@ export async function GET() {
     const prev = parseFloat(obs[1].value);
     const trend: 'rising' | 'stable' | 'falling' =
       latest > prev ? 'rising' : latest < prev ? 'falling' : 'stable';
-    return NextResponse.json({
-      fedRate: latest,
-      lastChanged: obs[0].date,
-      trend,
-      source: 'fred',
-    });
+    return NextResponse.json(
+      { fedRate: latest, lastChanged: obs[0].date, trend, source: 'fred' },
+      { headers: { 'Cache-Control': 'no-store' } }
+    );
   } catch (err) {
     console.error('[api/interest-rate]', err);
     return NextResponse.json(FALLBACK_INTEREST_RATE);

@@ -1,19 +1,22 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useSectorAnalysis } from '@/hooks/useSectorAnalysis';
 import { SectorCard } from './SectorCard';
 import { CardSkeleton } from '@/components/ui/LoadingSkeleton';
 import { ErrorBanner } from '@/components/ui/ErrorBanner';
 
 export function SectorGrid() {
-  const { sectors, isLoading, fallbackSources } = useSectorAnalysis();
+  const { sectors, isLoading, isValidating, fallbackSources } = useSectorAnalysis();
   const [lastUpdated, setLastUpdated] = useState('');
+  const prevValidating = useRef(false);
 
+  // Update timestamp when SWR finishes a revalidation (isValidating: true → false)
   useEffect(() => {
-    if (!isLoading && sectors.length > 0) {
+    if (prevValidating.current && !isValidating && sectors.length > 0) {
       setLastUpdated(new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
     }
-  }, [isLoading, sectors.length]);
+    prevValidating.current = isValidating;
+  }, [isValidating, sectors.length]);
 
   return (
     <section>

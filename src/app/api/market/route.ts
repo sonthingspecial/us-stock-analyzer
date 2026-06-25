@@ -43,13 +43,10 @@ export async function GET() {
         ? qqqResult.value
         : { price: 0, changePercent: 0 };
 
-    return NextResponse.json({
-      vix,
-      spy,
-      qqq,
-      timestamp: new Date().toISOString(),
-      source: 'live',
-    });
+    return NextResponse.json(
+      { vix, spy, qqq, timestamp: new Date().toISOString(), source: 'live' },
+      { headers: { 'Cache-Control': 'no-store' } }
+    );
   } catch (err) {
     console.error('[api/market]', err);
     return NextResponse.json(FALLBACK_MARKET);
