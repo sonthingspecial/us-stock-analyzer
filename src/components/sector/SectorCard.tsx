@@ -93,55 +93,22 @@ function RationalePanel({ sector }: { sector: SectorAnalysis }) {
           시장 환경 보정
         </p>
 
-        {/* VIX */}
-        <div className="flex items-center justify-between text-[11px]">
-          <div className="flex items-center gap-1.5">
-            <span className="text-gray-400 w-20 shrink-0">VIX 변동성</span>
-            <span className="text-gray-600 dark:text-gray-300">
-              {vix != null ? vixBracketLabel(vix) : '—'}
+        {[
+          { label: 'VIX 변동성', desc: vix != null ? vixBracketLabel(vix) : '—', score: sector.score.vix, max: 20 },
+          { label: '공포탐욕', desc: fgScore != null ? `${fgScore}점 ÷ 100 × 25` : '—', score: sector.score.fearGreed, max: 25 },
+          { label: '환율 보정', desc: '섹터 달러 민감도 반영', score: sector.score.exchangeRate, max: 15 },
+          { label: '금리 보정', desc: '섹터 금리 민감도 반영', score: sector.score.interestRate, max: 20 },
+        ].map(({ label, desc, score, max }) => (
+          <div key={label} className="flex items-start justify-between gap-2 text-[11px]">
+            <div className="min-w-0">
+              <span className="text-gray-400 block">{label}</span>
+              <span className="text-gray-600 dark:text-gray-300 leading-tight">{desc}</span>
+            </div>
+            <span className="font-bold font-mono text-gray-700 dark:text-gray-200 shrink-0">
+              +{score}<span className="text-gray-400 font-normal"> / {max}</span>
             </span>
           </div>
-          <span className="font-bold font-mono text-gray-700 dark:text-gray-200 shrink-0 ml-2">
-            +{sector.score.vix}<span className="text-gray-400 font-normal"> / 20</span>
-          </span>
-        </div>
-
-        {/* Fear & Greed */}
-        <div className="flex items-center justify-between text-[11px]">
-          <div className="flex items-center gap-1.5">
-            <span className="text-gray-400 w-20 shrink-0">공포탐욕</span>
-            <span className="text-gray-600 dark:text-gray-300 font-mono">
-              {fgScore != null
-                ? `${fgScore}점 ÷ 100 × 25`
-                : '—'}
-            </span>
-          </div>
-          <span className="font-bold font-mono text-gray-700 dark:text-gray-200 shrink-0 ml-2">
-            +{sector.score.fearGreed}<span className="text-gray-400 font-normal"> / 25</span>
-          </span>
-        </div>
-
-        {/* Exchange Rate */}
-        <div className="flex items-center justify-between text-[11px]">
-          <div className="flex items-center gap-1.5">
-            <span className="text-gray-400 w-20 shrink-0">환율 보정</span>
-            <span className="text-gray-600 dark:text-gray-300">섹터 달러 민감도 반영</span>
-          </div>
-          <span className="font-bold font-mono text-gray-700 dark:text-gray-200 shrink-0 ml-2">
-            +{sector.score.exchangeRate}<span className="text-gray-400 font-normal"> / 15</span>
-          </span>
-        </div>
-
-        {/* Interest Rate */}
-        <div className="flex items-center justify-between text-[11px]">
-          <div className="flex items-center gap-1.5">
-            <span className="text-gray-400 w-20 shrink-0">금리 보정</span>
-            <span className="text-gray-600 dark:text-gray-300">섹터 금리 민감도 반영</span>
-          </div>
-          <span className="font-bold font-mono text-gray-700 dark:text-gray-200 shrink-0 ml-2">
-            +{sector.score.interestRate}<span className="text-gray-400 font-normal"> / 20</span>
-          </span>
-        </div>
+        ))}
 
         {/* Total */}
         <div className="pt-1.5 mt-1 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between text-[11px] font-bold">
@@ -233,30 +200,26 @@ export function SectorCard({ sector }: { sector: SectorAnalysis }) {
         </div>
       )}
 
-      {/* Bottom actions */}
+      {/* Bottom actions — min 44px touch targets */}
       <div className="mt-auto pt-1 flex items-center justify-between gap-2">
-        {/* 근거 보기 toggle */}
         <button
           onClick={() => setExpanded(prev => !prev)}
           className={clsx(
-            'flex items-center gap-1 text-[11px] font-medium px-2.5 py-1 rounded-lg transition-all',
+            'flex items-center gap-1 text-[11px] font-medium px-3 py-3 sm:py-1.5 min-h-[44px] sm:min-h-0 rounded-lg transition-all flex-1 sm:flex-none justify-center sm:justify-start',
             expanded
               ? 'bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
               : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800'
           )}
         >
           점수 근거 보기
-          <ChevronDown
-            size={12}
-            className={clsx('transition-transform duration-300', expanded && 'rotate-180')}
-          />
+          <ChevronDown size={12} className={clsx('transition-transform duration-300', expanded && 'rotate-180')} />
         </button>
 
         <button
           onClick={() => router.push(`/sector/${id}`)}
-          className="text-[10px] text-blue-500 dark:text-blue-400 hover:underline"
+          className="text-[11px] text-blue-500 dark:text-blue-400 hover:underline px-2 py-3 sm:py-1.5 min-h-[44px] sm:min-h-0 flex items-center"
         >
-          상세 분석 보기 →
+          상세 보기 →
         </button>
       </div>
 

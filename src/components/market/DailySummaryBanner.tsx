@@ -96,12 +96,9 @@ export function DailySummaryBanner() {
               판단 규칙
             </p>
             {RULES.map((r, i) => (
-              <div key={i} className="flex items-start gap-2 text-xs">
-                <span className="shrink-0 font-mono text-gray-400 dark:text-gray-500 w-52 shrink-0">{r.cond}</span>
-                <span className="text-gray-300 dark:text-gray-600 shrink-0">→</span>
-                <span className="text-gray-600 dark:text-gray-300">
-                  {r.emoji} {r.msg}
-                </span>
+              <div key={i} className="space-y-0.5 text-xs">
+                <p className="font-mono text-gray-400 dark:text-gray-500">{r.cond}</p>
+                <p className="text-gray-600 dark:text-gray-300 pl-1">→ {r.emoji} {r.msg}</p>
               </div>
             ))}
             {/* Live values */}

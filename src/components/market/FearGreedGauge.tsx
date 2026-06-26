@@ -37,7 +37,7 @@ export function FearGreedGauge() {
       <p className="text-xs text-gray-400 mb-4">CNN Fear &amp; Greed Index — 시장 심리 종합 지표</p>
 
       <div className="flex flex-col md:flex-row items-center gap-6">
-        <div className="relative w-56 h-32 sm:w-64 sm:h-36 shrink-0">
+        <div className="relative w-full max-w-[14rem] mx-auto sm:mx-0 sm:w-64 h-36 sm:h-36 shrink-0">
           {isLoading ? (
             <div className="w-full h-full bg-gray-100 dark:bg-gray-800 rounded animate-pulse" />
           ) : (

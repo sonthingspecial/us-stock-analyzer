@@ -100,8 +100,8 @@ export function RecommendedETFs() {
                     {s.reason}
                   </p>
 
-                  {/* ETF cards */}
-                  <div className="flex gap-2.5">
+                  {/* ETF cards — stack on mobile, side-by-side on sm+ */}
+                  <div className="flex flex-col sm:flex-row gap-2">
                     {s.etfs.map(etf => (
                       <ETFCard
                         key={etf.ticker}
