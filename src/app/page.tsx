@@ -1,5 +1,6 @@
 import { Header } from '@/components/layout/Header';
 import { MarketBar } from '@/components/market/MarketBar';
+import { DailySummaryBanner } from '@/components/market/DailySummaryBanner';
 import { FearGreedGauge } from '@/components/market/FearGreedGauge';
 import { RecommendedETFs } from '@/components/market/RecommendedETFs';
 import { SectorGrid } from '@/components/sector/SectorGrid';
@@ -11,6 +12,7 @@ export default function Home() {
       <MarketBar />
 
       <main className="max-w-7xl mx-auto">
+        <DailySummaryBanner />
         <div className="px-4 py-4">
           <FearGreedGauge />
         </div>
