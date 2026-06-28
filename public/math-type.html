@@ -52,10 +52,10 @@
   .q-bar.done { background: var(--blue); }
   .q-axis-label { align-self: flex-start; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: var(--muted); margin-bottom: 12px; margin-top: 4px; }
   .q-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 28px 24px 22px; width: 100%; margin-bottom: 20px; }
-  .q-text { font-size: 18px; font-weight: 700; line-height: 1.55; letter-spacing: -0.01em; text-wrap: balance; }
+  .q-text { font-size: 18px; font-weight: 700; line-height: 1.55; letter-spacing: -0.01em; text-wrap: balance; word-break: keep-all; }
   .q-number { font-size: 12px; color: var(--muted); font-weight: 600; margin-top: 10px; }
-  .scale-ends { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); font-weight: 500; margin-bottom: 10px; padding: 0 2px; }
-  .scale-row { display: flex; gap: 8px; width: 100%; }
+  .scale-row { display: flex; gap: 8px; width: 100%; margin-bottom: 8px; }
+  .scale-ends { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); font-weight: 500; padding: 0 2px; }
   .scale-btn { flex: 1; aspect-ratio: 1; border-radius: 12px; border: 2px solid var(--border); background: var(--surface); font-size: 15px; font-weight: 700; color: var(--muted); cursor: pointer; transition: all 0.15s; font-family: inherit; display: flex; align-items: center; justify-content: center; }
   .scale-btn:hover { border-color: #5A85B8; color: var(--blue); background: var(--blue-light); }
   .scale-btn.sel { background: var(--blue); border-color: var(--blue); color: #fff; transform: scale(1.08); }
@@ -134,8 +134,8 @@
     <div class="q-text" id="q-text"></div>
     <div class="q-number" id="q-number"></div>
   </div>
-  <div class="scale-ends"><span>전혀 아니다</span><span>매우 그렇다</span></div>
   <div class="scale-row" id="scale-row"></div>
+  <div class="scale-ends"><span>전혀 아니다</span><span>매우 그렇다</span></div>
 </div>
 
 <div class="screen" id="s-result">
