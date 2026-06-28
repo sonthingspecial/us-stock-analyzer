@@ -1,0 +1,384 @@
+<title>나의 수학 유형은?</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #EEECEA;
+    --surface: #F8F7F4;
+    --card: #FFFFFF;
+    --text: #1C1A18;
+    --muted: #7C776F;
+    --blue: #3C6899;
+    --blue-light: #E8EFF8;
+    --coral: #C06040;
+    --coral-light: #FAF0EB;
+    --purple: #7055A0;
+    --purple-light: #F0EBF8;
+    --amber: #A07030;
+    --amber-light: #FBF5E6;
+    --border: #D8D3CB;
+    --radius: 16px;
+  }
+
+  html, body {
+    min-height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, 'Noto Sans KR', 'Apple SD Gothic Neo', BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px 16px;
+  }
+
+  .screen { display: none; flex-direction: column; align-items: center; width: 100%; max-width: 460px; animation: fadeUp 0.38s ease both; }
+  .screen.active { display: flex; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* START */
+  .eyebrow { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; padding: 5px 14px; border-radius: 100px; margin-bottom: 20px; background: var(--blue-light); color: var(--blue); }
+  .start-title { font-size: clamp(28px, 7vw, 40px); font-weight: 900; line-height: 1.2; text-align: center; letter-spacing: -0.02em; margin-bottom: 14px; text-wrap: balance; }
+  .start-title em { font-style: normal; color: var(--blue); }
+  .start-sub { font-size: 15px; color: var(--muted); text-align: center; line-height: 1.7; margin-bottom: 32px; text-wrap: balance; }
+
+  .type-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin-bottom: 28px; }
+  .tp { border-radius: 14px; padding: 16px; border: 1px solid var(--border); }
+  .tp-name { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+  .tp-desc { font-size: 12px; line-height: 1.5; opacity: 0.75; }
+  .tp-blue   { background: var(--blue-light);   color: var(--blue);   }
+  .tp-coral  { background: var(--coral-light);  color: var(--coral);  }
+  .tp-purple { background: var(--purple-light); color: var(--purple); }
+  .tp-amber  { background: var(--amber-light);  color: var(--amber);  }
+
+  .axis-row { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-bottom: 32px; }
+  .axis-tag { font-size: 12px; font-weight: 600; color: var(--muted); background: var(--card); border: 1px solid var(--border); border-radius: 100px; padding: 5px 14px; }
+
+  .btn-primary { background: var(--blue); color: #fff; border: none; border-radius: 14px; font-size: 16px; font-weight: 700; padding: 16px 52px; cursor: pointer; transition: background 0.15s, transform 0.1s; font-family: inherit; }
+  .btn-primary:hover { background: #2f5580; }
+  .btn-primary:active { transform: scale(0.97); }
+
+  /* QUESTION */
+  .q-progress { width: 100%; display: flex; gap: 5px; margin-bottom: 8px; }
+  .q-bar { flex: 1; height: 3px; border-radius: 2px; background: var(--border); transition: background 0.3s; }
+  .q-bar.done { background: var(--blue); }
+  .q-axis-label { align-self: flex-start; font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; font-weight: 700; color: var(--muted); margin-bottom: 12px; margin-top: 4px; }
+  .q-card { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 28px 24px 22px; width: 100%; margin-bottom: 20px; }
+  .q-text { font-size: 18px; font-weight: 700; line-height: 1.55; letter-spacing: -0.01em; text-wrap: balance; }
+  .q-number { font-size: 12px; color: var(--muted); font-weight: 600; margin-top: 10px; }
+  .scale-ends { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); font-weight: 500; margin-bottom: 10px; padding: 0 2px; }
+  .scale-row { display: flex; gap: 8px; width: 100%; }
+  .scale-btn { flex: 1; aspect-ratio: 1; border-radius: 12px; border: 2px solid var(--border); background: var(--surface); font-size: 15px; font-weight: 700; color: var(--muted); cursor: pointer; transition: all 0.15s; font-family: inherit; display: flex; align-items: center; justify-content: center; }
+  .scale-btn:hover { border-color: #5A85B8; color: var(--blue); background: var(--blue-light); }
+  .scale-btn.sel { background: var(--blue); border-color: var(--blue); color: #fff; transform: scale(1.08); }
+
+  /* RESULT */
+  .r-badge { font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; padding: 5px 16px; border-radius: 100px; margin-bottom: 18px; }
+  .r-name { font-size: clamp(40px, 11vw, 58px); font-weight: 900; letter-spacing: -0.03em; text-align: center; line-height: 1; margin-bottom: 10px; }
+  .r-tagline { font-size: 14px; color: var(--muted); text-align: center; margin-bottom: 28px; line-height: 1.6; text-wrap: balance; }
+
+  /* 2x2 map */
+  .map-outer { width: 100%; margin-bottom: 16px; }
+  .map-y-wrap { display: flex; gap: 8px; align-items: stretch; }
+  .map-y-axis { display: flex; flex-direction: column; justify-content: space-between; align-items: center; width: 24px; flex-shrink: 0; padding: 4px 0; }
+  .map-y-axis span { font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: 0.04em; writing-mode: vertical-rl; text-orientation: mixed; }
+  .map-grid { flex: 1; display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 6px; aspect-ratio: 2 / 1.1; }
+  .map-cell { border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 800; opacity: 0.28; transition: opacity 0.3s; text-align: center; padding: 6px; border: 2px solid transparent; }
+  .map-cell.active { opacity: 1; border-color: currentColor; }
+  .map-x-axis { display: flex; justify-content: space-between; padding: 6px 2px 0; font-size: 10px; font-weight: 700; color: var(--muted); letter-spacing: 0.04em; }
+
+  .r-section { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); padding: 20px; width: 100%; margin-bottom: 12px; }
+  .s-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-bottom: 12px; }
+  .trait-row { font-size: 13.5px; line-height: 1.55; padding: 6px 0; border-bottom: 1px solid var(--bg); display: flex; gap: 10px; align-items: flex-start; }
+  .trait-row:last-child { border-bottom: none; }
+  .trait-dot { width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; margin-top: 7px; }
+
+  .r-msg { border-radius: var(--radius); padding: 22px 20px; width: 100%; margin-bottom: 12px; border-left: 3px solid; font-size: 15px; line-height: 1.85; font-weight: 500; color: var(--text); }
+
+  .r-caution { background: var(--surface); border-radius: var(--radius); border: 1px solid var(--border); padding: 16px 20px; width: 100%; margin-bottom: 12px; }
+  .caution-label { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--coral); font-weight: 700; margin-bottom: 8px; }
+  .caution-text { font-size: 13.5px; color: var(--text); line-height: 1.65; }
+
+  .tips-wrap { background: var(--card); border-radius: var(--radius); border: 1px solid var(--border); width: 100%; margin-bottom: 12px; overflow: hidden; }
+  .tips-head { padding: 16px 20px 12px; border-bottom: 1px solid var(--bg); }
+  .tips-label { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; font-weight: 700; color: var(--muted); margin-bottom: 4px; }
+  .tips-title { font-size: 15px; font-weight: 800; letter-spacing: -0.01em; }
+  .tip-item { display: flex; gap: 14px; align-items: flex-start; padding: 14px 20px; border-bottom: 1px solid var(--bg); }
+  .tip-item:last-child { border-bottom: none; }
+  .tip-num { font-size: 11px; font-weight: 800; width: 20px; height: 20px; border-radius: 6px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .tip-body { flex: 1; }
+  .tip-name { font-size: 14px; font-weight: 700; margin-bottom: 3px; }
+  .tip-desc { font-size: 12.5px; color: var(--muted); line-height: 1.6; }
+
+  .btn-retry { background: transparent; color: var(--muted); border: 1.5px solid var(--border); border-radius: 12px; font-size: 14px; font-weight: 600; padding: 12px 32px; cursor: pointer; transition: all 0.15s; margin-top: 8px; font-family: inherit; }
+  .btn-retry:hover { border-color: var(--blue); color: var(--blue); }
+
+  @media (prefers-reduced-motion: reduce) { .screen { animation: none; } .scale-btn, .map-cell { transition: none; } }
+</style>
+
+<!-- START -->
+<div class="screen active" id="s-start">
+  <div class="eyebrow">수학 학습 유형 진단</div>
+  <h1 class="start-title">나의 수학 유형은<br><em>어떤 타입일까?</em></h1>
+  <p class="start-sub">개념을 어떻게 받아들이고<br>압박 상황에서 어떻게 반응하는지 알아봐요.</p>
+
+  <div class="type-grid">
+    <div class="tp tp-blue">
+      <div class="tp-name">탐구형</div>
+      <div class="tp-desc">원리를 파고들고<br>시험장에서도 침착한</div>
+    </div>
+    <div class="tp tp-coral">
+      <div class="tp-name">실전형</div>
+      <div class="tp-desc">빠르고 실용적으로<br>실전에서 강한</div>
+    </div>
+    <div class="tp tp-purple">
+      <div class="tp-name">완벽주의형</div>
+      <div class="tp-desc">원리는 알지만<br>긴장에 흔들리는</div>
+    </div>
+    <div class="tp tp-amber">
+      <div class="tp-name">암기형</div>
+      <div class="tp-desc">공식에 의존하고<br>불안이 높은</div>
+    </div>
+  </div>
+
+  <div class="axis-row">
+    <div class="axis-tag">이해 방식: 원리 ↔ 공식</div>
+    <div class="axis-tag">압박 반응: 침착 ↔ 긴장</div>
+  </div>
+
+  <button class="btn-primary" onclick="startQuiz()">시작하기</button>
+</div>
+
+<!-- QUESTION -->
+<div class="screen" id="s-question">
+  <div class="q-progress" id="q-progress"></div>
+  <div class="q-axis-label" id="q-axis-label"></div>
+  <div class="q-card">
+    <div class="q-text" id="q-text"></div>
+    <div class="q-number" id="q-number"></div>
+  </div>
+  <div class="scale-ends"><span>전혀 아니다</span><span>매우 그렇다</span></div>
+  <div class="scale-row" id="scale-row"></div>
+</div>
+
+<!-- RESULT -->
+<div class="screen" id="s-result">
+  <div class="r-badge" id="r-badge"></div>
+  <div class="r-name" id="r-name"></div>
+  <div class="r-tagline" id="r-tagline"></div>
+
+  <div class="map-outer">
+    <div class="map-y-wrap">
+      <div class="map-y-axis">
+        <span>침착</span>
+        <span>긴장</span>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:6px;">
+        <div class="map-grid" id="map-grid">
+          <div class="map-cell tp-blue"   data-key="탐구형">탐구형</div>
+          <div class="map-cell tp-coral"  data-key="실전형">실전형</div>
+          <div class="map-cell tp-purple" data-key="완벽주의형">완벽주의형</div>
+          <div class="map-cell tp-amber"  data-key="암기형">암기형</div>
+        </div>
+        <div class="map-x-axis"><span>← 원리</span><span>공식 →</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="r-section">
+    <div class="s-label">이런 특징이 있어요</div>
+    <div id="r-traits"></div>
+  </div>
+
+  <div class="r-msg" id="r-msg"></div>
+
+  <div class="r-caution">
+    <div class="caution-label">주의할 점</div>
+    <div class="caution-text" id="r-caution"></div>
+  </div>
+
+  <div class="tips-wrap">
+    <div class="tips-head">
+      <div class="tips-label">공부 처방</div>
+      <div class="tips-title" id="r-tips-title"></div>
+    </div>
+    <div id="r-tips-list"></div>
+  </div>
+
+  <button class="btn-retry" onclick="resetQuiz()">다시 하기</button>
+</div>
+
+<script>
+const questions = [
+  // 축1: 이해 방식 — 높을수록 원리형
+  { text: "공식이 왜 그렇게 되는지 이해해야 마음이 편하다", axis: 1 },
+  { text: "공식을 외우기보다 원리를 이해하는 게 더 중요하다", axis: 1 },
+  { text: "처음 보는 문제도 원리부터 생각하면 접근할 수 있다", axis: 1 },
+  // 축2: 압박 반응 — 높을수록 침착형
+  { text: "시험이나 평가 상황에서도 크게 흔들리지 않는 편이다", axis: 2 },
+  { text: "모르는 문제가 나와도 당황하지 않고 넘어갈 수 있다", axis: 2 },
+  { text: "수학 시험 전날 불안보다는 준비된 느낌이 더 크다", axis: 2 },
+];
+
+const TYPES = {
+  "탐구형": {
+    key: "탐구형",
+    color: "var(--blue)", bg: "var(--blue-light)",
+    tagline: "원리를 파고들고, 시험장에서도 실력을 발휘하는 유형",
+    traits: ["개념의 '왜'를 알아야 직성이 풀린다", "이해가 깊어서 응용 문제에 강하다", "긴장보다 집중 모드로 시험에 임한다"],
+    msg: "수학을 가장 제대로 즐기는 유형이에요.\n원리를 이해하고, 실전에서도 그 이해를 꺼낼 수 있다는 건 정말 큰 강점이에요.\n약점은 깊이 파고드느라 시간이 걸리는 것.\n'충분히 이해했으면 GO' 기준을 만들어보면 더 완벽해져요.",
+    caution: "원리를 파악하느라 한 문제에 오래 머물 수 있어요. 시험에서는 시간 배분 전략을 미리 세워둬요.",
+    tipsTitle: "깊이는 유지하면서 속도 감각 더하기",
+    tips: [
+      { name: "타이머 학습 도입", desc: "문제당 시간 제한을 두고 푸는 연습을 해요. 깊이 이해하는 습관은 살리면서 속도 감각을 키울 수 있어요." },
+      { name: "심화 증명 도전", desc: "이미 원리에 강하니 교과서 공식을 빈 노트에 직접 유도해봐요. 이해의 빈틈을 찾을 수 있어요." },
+      { name: "다양한 풀이법 탐구", desc: "한 문제를 여러 방법으로 풀어봐요. 탐구형에게 가장 잘 맞는 공부법이에요." },
+      { name: "기출 실전 훈련", desc: "실제 시험 시간을 지키며 기출을 풀면서 '시간 내 이해 수준 조절'을 연습해요." },
+    ]
+  },
+  "실전형": {
+    key: "실전형",
+    color: "var(--coral)", bg: "var(--coral-light)",
+    tagline: "빠르고 실용적으로, 실전에서 흔들리지 않는 유형",
+    traits: ["공식을 꺼내 빠르게 적용한다", "압박 상황에서도 손이 잘 움직인다", "시험장에서 오히려 집중력이 올라가는 편이다"],
+    msg: "실전에서 가장 강한 유형이에요.\n긴장하지 않고 빠르게 적용하는 능력은 시험에서 진짜 무기예요.\n다만 공식이 없는 새로운 유형을 만나면 막힐 수 있어요.\n공식 하나당 '왜?' 한 번씩만 물어보는 습관을 더하면 완성이에요.",
+    caution: "익숙한 유형은 빠르지만 처음 보는 유형에서 막힐 수 있어요. 다양한 유형에 노출하는 시간을 의도적으로 만들어요.",
+    tipsTitle: "속도는 살리면서 원리 한 층 쌓기",
+    tips: [
+      { name: "공식 유도 직접 써보기", desc: "외운 공식 하나를 골라 처음부터 유도해봐요. 주 2개만 해도 응용력이 달라져요." },
+      { name: "처음 보는 유형 의도적으로 풀기", desc: "모의고사 고난도나 낯선 유형에 일부러 도전하는 시간을 만들어요. 막혀도 괜찮아요." },
+      { name: "서술형 문제 연습", desc: "서술형은 풀이 과정을 설명해야 해서 원리 이해가 드러나요. 답뿐 아니라 과정을 쓰는 연습을 병행해요." },
+      { name: "풀이 후 '다른 방법' 찾기", desc: "빠르게 풀었다면 다른 접근법이 있는지 30초만 더 생각해봐요. 유연성이 생겨요." },
+    ]
+  },
+  "완벽주의형": {
+    key: "완벽주의형",
+    color: "var(--purple)", bg: "var(--purple-light)",
+    tagline: "원리는 알지만, 시험 압박에 흔들리는 유형",
+    traits: ["개념 이해가 깊고 꼼꼼하다", "시험이나 평가 상황에서 긴장이 심해진다", "이해 못 한 부분이 있으면 더 불안해진다"],
+    msg: "이해의 깊이는 정말 훌륭한 강점이에요.\n문제는 그 실력이 시험장에서 100% 나오지 않는다는 것.\n긴장하면 알던 것도 안 떠오르는 건 실력 부족이 아니라 심리 문제예요.\n'틀려도 어때' 마음으로 한 발 뒤로 물러서는 연습이 필요해요.",
+    caution: "완벽히 이해하지 못하면 더 불안해지는 악순환이 생길 수 있어요. 80% 이해에서 넘어가는 기준을 만들어봐요.",
+    tipsTitle: "이해는 살리고, 긴장 루틴 만들기",
+    tips: [
+      { name: "'일단 넘기기' 연습", desc: "막히면 2분 안에 넘어가는 규칙을 만들어요. 이해를 포기하는 게 아니라 순서를 바꾸는 거예요." },
+      { name: "시험 전 루틴 만들기", desc: "시험 5분 전 '잘 모르는 문제는 넘긴다'를 스스로에게 말하는 루틴을 만들어봐요. 예측 가능성이 긴장을 낮춰줘요." },
+      { name: "실전 모의 연습 자주 하기", desc: "타이머를 켜고 시험처럼 푸는 경험을 반복하면 긴장 상황에 익숙해져요." },
+      { name: "개념 설명하기 연습", desc: "이미 원리를 잘 아니까 배운 개념을 혼자 말로 설명해봐요. 이해를 확인하면서 자신감도 생겨요." },
+    ]
+  },
+  "암기형": {
+    key: "암기형",
+    color: "var(--amber)", bg: "var(--amber-light)",
+    tagline: "공식에 의존하고, 시험 불안이 높은 유형",
+    traits: ["공식을 외워 적용하는 방식에 익숙하다", "시험 상황에서 긴장이 심하고 자주 흔들린다", "외운 공식이 긴장하면 떠오르지 않는 악순환이 생긴다"],
+    msg: "가장 힘든 조합일 수 있어요. 그런데 이건 능력의 문제가 아니에요.\n공식만 외우면 긴장할 때 더 막히고, 막히면 더 불안해지는 악순환이에요.\n지금 당장 공식 하나의 원리를 이해하는 것부터 시작해봐요.\n이해한 건 긴장해도 안 사라져요. 외운 건 사라지지만.",
+    caution: "외운 공식이 긴장 상황에서 사라지는 경험을 반복하면 수학 불안이 심해질 수 있어요. 이해 중심으로 전환하는 게 핵심이에요.",
+    tipsTitle: "공식 암기에서 이해 중심으로 전환하기",
+    tips: [
+      { name: "공식 1개씩 원리로 바꾸기", desc: "오늘 외운 공식 하나를 골라 '왜 이렇게 되는지' 교과서나 유튜브로 찾아봐요. 하루 1개면 충분해요." },
+      { name: "긴장 낮추는 루틴 만들기", desc: "시험 전 '모르는 건 넘긴다' 규칙을 정해두면 긴장이 줄어요. 예측 가능한 행동이 불안을 낮춰요." },
+      { name: "쉬운 문제로 성공 경험 쌓기", desc: "자신 있는 유형부터 반복해서 맞추는 경험을 늘려요. 작은 성공이 수학 불안을 낮추는 가장 빠른 길이에요." },
+      { name: "오개념 하나씩 잡기", desc: "틀린 문제를 '왜 틀렸는지'로 분류해요. 공식을 몰라서인지, 원리를 몰라서인지 구분하면 공부 방향이 보여요." },
+    ]
+  }
+};
+
+let scores = [], current = 0;
+
+function startQuiz() {
+  scores = []; current = 0;
+  renderQ(0);
+  go('s-question');
+}
+
+function renderQ(i) {
+  const q = questions[i];
+  const axisNames = { 1: "이해 방식", 2: "압박 반응" };
+  document.getElementById('q-axis-label').textContent = `축 ${q.axis} — ${axisNames[q.axis]}`;
+  document.getElementById('q-text').textContent = q.text;
+  document.getElementById('q-number').textContent = `${i + 1} / ${questions.length}`;
+  document.getElementById('q-progress').innerHTML = questions.map((_, j) =>
+    `<div class="q-bar ${j < i ? 'done' : ''}"></div>`).join('');
+  document.getElementById('scale-row').innerHTML = [1,2,3,4,5].map(n =>
+    `<button class="scale-btn" onclick="pick(${n})">${n}</button>`).join('');
+}
+
+function pick(val) {
+  scores[current] = val;
+  document.querySelectorAll('.scale-btn')[val - 1].classList.add('sel');
+  setTimeout(() => {
+    current++;
+    current < questions.length ? renderQ(current) : calcResult();
+  }, 300);
+}
+
+function calcResult() {
+  const a1 = (scores[0] + scores[1] + scores[2]) / 3; // 원리↑
+  const a2 = (scores[3] + scores[4] + scores[5]) / 3; // 침착↑
+  const principle = a1 > 3;
+  const calm      = a2 > 3;
+  const key = principle && calm   ? "탐구형"
+            : !principle && calm  ? "실전형"
+            : principle && !calm  ? "완벽주의형"
+                                  : "암기형";
+  showResult(key);
+}
+
+function showResult(key) {
+  const t = TYPES[key];
+
+  const badge = document.getElementById('r-badge');
+  badge.textContent = '나의 수학 유형';
+  badge.style.background = t.bg; badge.style.color = t.color;
+
+  document.getElementById('r-name').textContent = key;
+  document.getElementById('r-name').style.color = t.color;
+  document.getElementById('r-tagline').textContent = t.tagline;
+
+  document.querySelectorAll('.map-cell').forEach(c =>
+    c.classList.toggle('active', c.dataset.key === key));
+
+  document.getElementById('r-traits').innerHTML = t.traits.map(tr =>
+    `<div class="trait-row"><span class="trait-dot" style="background:${t.color}"></span>${tr}</div>`
+  ).join('');
+
+  const msg = document.getElementById('r-msg');
+  msg.textContent = t.msg;
+  msg.style.background = t.bg;
+  msg.style.borderColor = t.color;
+
+  document.getElementById('r-caution').textContent = t.caution;
+
+  document.getElementById('r-tips-title').textContent = t.tipsTitle;
+  document.getElementById('r-tips-list').innerHTML = t.tips.map((tip, i) =>
+    `<div class="tip-item">
+      <div class="tip-num" style="background:${t.bg};color:${t.color}">${i + 1}</div>
+      <div class="tip-body">
+        <div class="tip-name">${tip.name}</div>
+        <div class="tip-desc">${tip.desc}</div>
+      </div>
+    </div>`
+  ).join('');
+
+  go('s-result');
+}
+
+function resetQuiz() { go('s-start'); }
+
+function go(id) {
+  document.querySelectorAll('.screen').forEach(s => { s.classList.remove('active'); s.style.animation = 'none'; });
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  requestAnimationFrame(() => { el.style.animation = ''; });
+  window.scrollTo(0, 0);
+}
+</script>
