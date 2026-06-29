@@ -35,11 +35,11 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
         <div className="min-w-0">
           <h1 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
-            <span>📊</span>
-            <span className="truncate">미국 주식 섹터 분석</span>
+            <span>🏠</span>
+            <span className="truncate">청약 정보 조회</span>
           </h1>
           <p className="text-xs text-gray-500 mt-0.5 hidden sm:block">
-            한국 투자자를 위한 실시간 투자 타이밍 분석
+            오늘 이후 마감 청약 공고 · 실시간 조회
             {lastUpdated && <span className="ml-2 text-gray-400">· 업데이트: {lastUpdated}</span>}
           </p>
         </div>
