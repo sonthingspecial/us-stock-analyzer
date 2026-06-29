@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio — 수학 선생님의 vibe coding</title>
+  <meta name="description" content="수학 선생님이자 vibe coding으로 웹 도구를 만드는 사람의 포트폴리오">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0d0d0d;
+      --surface: #141414;
+      --text-primary: #e8e8e8;
+      --text-secondary: #6b6b6b;
+      --blue: #2563eb;
+      --blue-glow: rgba(37, 99, 235, 0.2);
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text-primary);
+      font-family: 'Inter', 'Noto Sans KR', system-ui, sans-serif;
+      font-size: 1rem;
+      line-height: 1.75;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 2rem;
+      transition: background 0.3s, backdrop-filter 0.3s;
+    }
+
+    nav.scrolled {
+      background: rgba(13, 13, 13, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+    }
+
+    .nav-brand {
+      font-weight: 700;
+      font-size: 1rem;
+      color: var(--text-primary);
+      text-decoration: none;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.875rem;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover { color: var(--text-primary); }
+
+    /* Hero */
+    #about {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 8rem 2rem 4rem;
+      max-width: 900px;
+      margin: 0 auto;
+      position: relative;
+    }
+
+    .hero-eyebrow {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .hero-title {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin-bottom: 1.5rem;
+      letter-spacing: -0.02em;
+    }
+
+    .hero-sub {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+      letter-spacing: 0.05em;
+      margin-bottom: 2.5rem;
+    }
+
+    .hero-cta {
+      color: var(--blue);
+      text-decoration: none;
+      font-size: 0.95rem;
+      border-bottom: 1px solid var(--blue);
+      padding-bottom: 2px;
+      transition: opacity 0.2s;
+    }
+
+    .hero-cta:hover { opacity: 0.7; }
+
+    .scroll-arrow {
+      position: absolute;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--text-secondary);
+      font-size: 1.25rem;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* Sections common */
+    .section-inner {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 6rem 2rem;
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 3rem;
+    }
+
+    /* Project Grid */
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+
+    /* Project Card */
+    .project-card {
+      background: var(--surface);
+      border: 1px solid #1e1e1e;
+      border-radius: 12px;
+      overflow: hidden;
+      text-decoration: none;
+      color: var(--text-primary);
+      transition: transform 0.25s, box-shadow 0.25s, border-color 0.25s;
+      display: block;
+    }
+
+    a.project-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 0 0 1px var(--blue), 0 8px 32px var(--blue-glow);
+      border-color: var(--blue);
+    }
+
+    .card-thumb {
+      height: 140px;
+      background: linear-gradient(135deg,
+        hsl(var(--thumb-hue, 220), 70%, 12%),
+        hsl(var(--thumb-hue, 220), 80%, 22%));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-initial {
+      font-size: 2rem;
+      font-weight: 700;
+      color: rgba(255,255,255,0.15);
+      letter-spacing: 0.1em;
+    }
+
+    .card-thumb--empty {
+      background: repeating-linear-gradient(
+        45deg,
+        #1a1a1a,
+        #1a1a1a 4px,
+        #141414 4px,
+        #141414 16px
+      );
+    }
+
+    .card-body { padding: 1.25rem; }
+
+    .card-name {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    .card-desc {
+      font-size: 0.825rem;
+      color: var(--text-secondary);
+      margin-bottom: 1rem;
+    }
+
+    .card-link {
+      font-size: 0.8rem;
+      color: var(--blue);
+      letter-spacing: 0.03em;
+    }
+
+    .card-coming-soon {
+      opacity: 0.45;
+      cursor: default;
+      border-style: dashed;
+    }
+
+    /* Links */
+    .link-card {
+      display: flex;
+      align-items: center;
+      gap: 1.25rem;
+      background: var(--surface);
+      border: 1px solid #1e1e1e;
+      border-radius: 12px;
+      padding: 1.25rem 1.5rem;
+      text-decoration: none;
+      color: var(--text-primary);
+      max-width: 480px;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .link-card:hover {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 1px var(--blue), 0 4px 16px var(--blue-glow);
+    }
+
+    .link-icon {
+      font-size: 1.25rem;
+      color: var(--blue);
+      flex-shrink: 0;
+    }
+
+    .link-text {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .link-name {
+      font-weight: 700;
+      font-size: 0.9rem;
+    }
+
+    .link-url {
+      font-size: 0.78rem;
+      color: var(--text-secondary);
+    }
+
+    .link-arrow {
+      color: var(--text-secondary);
+      font-size: 1rem;
+      transition: color 0.2s;
+    }
+
+    .link-card:hover .link-arrow { color: var(--blue); }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      color: var(--text-secondary);
+      font-size: 0.8rem;
+      border-top: 1px solid #1e1e1e;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav { padding: 1rem; }
+      .nav-links { gap: 1rem; }
+      .nav-links a { font-size: 0.75rem; }
+      #about { padding: 7rem 1.25rem 4rem; }
+      .project-grid { grid-template-columns: 1fr; }
+      .section-inner { padding: 4rem 1.25rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav id="navbar">
+  <a href="#about" class="nav-brand">SST</a>
+  <ul class="nav-links">
+    <li><a href="#about">소개</a></li>
+    <li><a href="#projects">프로젝트</a></li>
+    <li><a href="#links">링크</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <section id="about">
+    <div class="hero-content">
+      <p class="hero-eyebrow">안녕하세요.</p>
+      <h1 class="hero-title">
+        수학 선생님이자<br>
+        vibe coding으로<br>
+        웹 도구를 만드는 사람입니다.
+      </h1>
+      <p class="hero-sub">Math teacher · Vibe coder · Tool builder</p>
+      <a href="#projects" class="hero-cta">프로젝트 보기 →</a>
+    </div>
+    <div class="scroll-arrow" aria-hidden="true">↓</div>
+  </section>
+
+  <section id="projects">
+    <div class="section-inner">
+      <h2 class="section-title">Projects</h2>
+      <div class="project-grid">
+
+        <a href="https://sonthingspecial.vercel.app/math-type.html" target="_blank" rel="noopener" class="project-card">
+          <div class="card-thumb" style="--thumb-hue: 220;">
+            <span class="card-initial">MT</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-name">Math Type</h3>
+            <p class="card-desc">수학 수식 타이핑 도구</p>
+            <span class="card-link">바로가기 →</span>
+          </div>
+        </a>
+
+        <a href="https://sonthingspecial.vercel.app/" target="_blank" rel="noopener" class="project-card">
+          <div class="card-thumb" style="--thumb-hue: 200;">
+            <span class="card-initial">SA</span>
+          </div>
+          <div class="card-body">
+            <h3 class="card-name">섹터 분석</h3>
+            <p class="card-desc">미국 주식 섹터 점수판</p>
+            <span class="card-link">바로가기 →</span>
+          </div>
+        </a>
+
+        <div class="project-card card-coming-soon">
+          <div class="card-thumb card-thumb--empty"></div>
+          <div class="card-body">
+            <h3 class="card-name">Coming Soon</h3>
+            <p class="card-desc">준비 중입니다</p>
+          </div>
+        </div>
+
+        <div class="project-card card-coming-soon">
+          <div class="card-thumb card-thumb--empty"></div>
+          <div class="card-body">
+            <h3 class="card-name">Coming Soon</h3>
+            <p class="card-desc">준비 중입니다</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <section id="links">
+    <div class="section-inner">
+      <h2 class="section-title">Links</h2>
+      <a href="https://sonthingspecial.vercel.app/" target="_blank" rel="noopener" class="link-card">
+        <span class="link-icon">▲</span>
+        <span class="link-text">
+          <span class="link-name">Vercel</span>
+          <span class="link-url">sonthingspecial.vercel.app</span>
+        </span>
+        <span class="link-arrow">→</span>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>© 2026 · Made with vibe coding</p>
+</footer>
+
+<script>
+  const navbar = document.getElementById('navbar');
+  window.addEventListener('scroll', () => {
+    navbar.classList.toggle('scrolled', window.scrollY > 20);
+  });
+</script>
+
+</body>
+</html>
