@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { Header } from '@/components/layout/Header';
-import { ChevronDown, ChevronUp, MapPin, Calendar, Home, AlertCircle } from 'lucide-react';
+import { ChevronDown, ChevronUp, MapPin, Calendar, Home as HomeIcon, AlertCircle } from 'lucide-react';
 import type { AptItem } from '@/app/api/apt/schedule/route';
 
 const REGIONS = [
@@ -89,7 +89,7 @@ function AptCard({ item }: { item: AptItem }) {
 
       {item.supplyCount && (
         <div className="flex items-center gap-1 text-xs text-gray-500 dark:text-gray-400 mb-3">
-          <Home size={11} />
+          <HomeIcon size={11} />
           <span>공급 {item.supplyCount}세대</span>
         </div>
       )}
