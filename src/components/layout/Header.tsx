@@ -1,11 +1,14 @@
 'use client';
 import { RefreshCw, Sun, Moon } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 export function Header() {
   const [rotating, setRotating] = useState(false);
   const [isDark, setIsDark] = useState(false);
   const [lastUpdated, setLastUpdated] = useState('');
+  const pathname = usePathname();
 
   useEffect(() => {
     setIsDark(document.documentElement.classList.contains('dark'));
@@ -31,18 +34,41 @@ export function Header() {
   };
 
   return (
-    <header className="border-b border-gray-200 dark:border-gray-800 bg-white/90 dark:bg-gray-950/90 backdrop-blur-sm shadow-sm">
+    <header className="border-b border-gray-200 dark:border-gray-800 bg-white/90 dark:bg-gray-950/90 backdrop-blur-sm shadow-sm sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-2">
         <div className="min-w-0">
           <h1 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-1.5">
-            <span>🏠</span>
-            <span className="truncate">청약 정보 조회</span>
+            <span>📊</span>
+            <span className="truncate">미국 주식 · 청약</span>
           </h1>
           <p className="text-xs text-gray-500 mt-0.5 hidden sm:block">
-            오늘 이후 마감 청약 공고 · 실시간 조회
+            한국 투자자를 위한 실시간 분석
             {lastUpdated && <span className="ml-2 text-gray-400">· 업데이트: {lastUpdated}</span>}
           </p>
         </div>
+
+        <nav className="flex items-center gap-1 shrink-0">
+          <Link
+            href="/"
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors
+              ${pathname === '/'
+                ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white'
+                : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+              }`}
+          >
+            📊 주식
+          </Link>
+          <Link
+            href="/apt"
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors
+              ${pathname === '/apt'
+                ? 'bg-gray-100 dark:bg-gray-800 text-gray-900 dark:text-white'
+                : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+              }`}
+          >
+            🏠 청약
+          </Link>
+        </nav>
 
         <div className="flex items-center gap-1 shrink-0">
           <button
