@@ -47,7 +47,7 @@ export function Header() {
           </p>
         </div>
 
-        <nav className="flex items-center gap-1 shrink-0">
+        <nav className="flex items-center gap-1 shrink-0 mr-1">
           <Link
             href="/"
             className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors
