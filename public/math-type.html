@@ -107,6 +107,13 @@
   .btn-retry { background: transparent; color: var(--muted); border: 1.5px solid var(--border); border-radius: 12px; font-size: 14px; font-weight: 600; padding: 12px 32px; cursor: pointer; transition: all 0.15s; margin-top: 8px; font-family: inherit; }
   .btn-retry:hover { border-color: var(--blue); color: var(--blue); }
 
+  .disclaimer { font-size: 12px; color: var(--muted); text-align: center; line-height: 1.6; margin-top: -18px; margin-bottom: 28px; text-wrap: balance; }
+  .growth-note { font-size: 13px; color: var(--muted); text-align: center; line-height: 1.6; margin-bottom: 20px; padding: 12px 18px; background: var(--surface); border-radius: 12px; text-wrap: balance; }
+  .refs { width: 100%; margin-bottom: 4px; padding: 16px 18px; border-top: 1px solid var(--border); font-size: 11.5px; color: var(--muted); line-height: 1.7; }
+  .refs-title { font-size: 11px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .refs-item { margin-bottom: 6px; }
+  .refs-note { margin-top: 10px; font-style: italic; }
+
   @media (prefers-reduced-motion: reduce) { .screen { animation: none; } .scale-btn, .map-cell { transition: none; } }
 </style>
 
@@ -114,6 +121,7 @@
   <div class="eyebrow">수학 학습 유형 진단</div>
   <h1 class="start-title">나의 수학 유형은<br><em>어떤 타입일까?</em></h1>
   <p class="start-sub">개념을 어떻게 받아들이고, 압박 상황에서 어떻게 반응하는지 8가지 질문으로 알아봐요.</p>
+  <p class="disclaimer">정밀한 심리 진단이 아니라, 지금 이 순간의 공부 패턴을 재미있게 자각해보는 도구예요.</p>
   <div class="type-grid">
     <div class="tp tp-blue"><div class="tp-name">탐구형</div><div class="tp-desc">원리를 파고들고<br>시험장에서도 침착한</div></div>
     <div class="tp tp-coral"><div class="tp-name">실전형</div><div class="tp-desc">빠르고 실용적으로<br>실전에서 강한</div></div>
@@ -142,6 +150,7 @@
   <div class="r-badge" id="r-badge"></div>
   <div class="r-name" id="r-name"></div>
   <div class="r-tagline" id="r-tagline"></div>
+  <div class="growth-note">이 유형은 타고난 성격이 아니라 지금 시점의 패턴이에요. 방법을 바꾸면 다음엔 다른 결과가 나올 수 있어요 — 그래도 괜찮아요, 그게 정상입니다.</div>
   <div class="map-outer">
     <div class="map-y-wrap">
       <div class="map-y-axis"><span>침착</span><span>긴장</span></div>
@@ -165,6 +174,7 @@
   <div class="r-caution">
     <div class="caution-label">주의할 점</div>
     <div class="caution-text" id="r-caution"></div>
+    <div class="caution-text" style="margin-top:8px;">이건 약점이 아니라 지금 균형을 맞춰야 할 지점이에요.</div>
   </div>
   <div class="tips-wrap">
     <div class="tips-head">
@@ -172,6 +182,13 @@
       <div class="tips-title" id="r-tips-title"></div>
     </div>
     <div id="r-tips-list"></div>
+  </div>
+  <div class="refs">
+    <div class="refs-title">📚 이 처방은 다음 학습과학 연구에 근거해요</div>
+    <div class="refs-item">· 인출연습(기출 실전훈련): Roediger &amp; Karpicke (2006), "The Power of Testing Memory", Perspectives on Psychological Science</div>
+    <div class="refs-item">· 교차연습(다양한 풀이법 탐구): Rohrer &amp; Taylor (2007), "The shuffling of mathematics problems improves learning", Instructional Science</div>
+    <div class="refs-item">· 생성효과(심화 증명 도전): Slamecka &amp; Graf (1978), "The Generation Effect: Delineation of a Phenomenon", Journal of Experimental Psychology: Human Learning &amp; Memory</div>
+    <div class="refs-note">※ 유형 분류 자체는 재미와 자각을 위한 도구이며, 위 학습법들은 유형과 무관하게 누구에게나 효과가 검증된 방법입니다.</div>
   </div>
   <button class="btn-retry" onclick="resetQuiz()">다시 하기</button>
 </div>
